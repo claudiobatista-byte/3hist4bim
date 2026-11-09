@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doce Memória e os Direitos Humanos | GO-EMCHS605D | Ciências Humanas e Sociais Aplicadas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#10363f; --navy-2:#17505b; --blue:#c2592f; --blue-dk:#a94724; --blue-soft:#fbeadf;
+    --teal:#2f8f83; --gold:#e0a43a; --bg:#f6f0e7; --card:#ffffff;
+    --ink:#1f1a17; --muted:#6b5f55; --line:#e8dccb;
+    --ok:#2f8f83; --ok-bg:#e8f5f2; --bad:#b42318; --bad-bg:#fef3f2;
+    --radius:18px; --shadow:0 10px 30px -12px rgba(16,54,63,.28);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased;
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  textarea,input{-webkit-user-select:text;user-select:text}
+  button{font-family:inherit;cursor:pointer}
+  .hidden{display:none!important}
+  a{color:var(--blue-dk)}
+
+  /* ---------- Topbar ---------- */
+  .topbar{background:var(--navy);color:#fff;border-bottom:4px solid var(--gold)}
+  .topbar-in{max-width:1080px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+  .brand-mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--gold),#d9683b);display:grid;place-items:center;font-weight:900;font-size:13px;color:#2a1608;flex:none}
+  .brand-txt small{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#9fc4c9;font-weight:600}
+  .brand-txt strong{font-size:14.5px;font-weight:700}
+  .topbar .student{margin-left:auto;text-align:right;font-size:12px;color:#cfe3e6;line-height:1.35}
+  .topbar .student b{color:#fff;font-weight:700;display:block;font-size:13px}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 20px 56px}
+
+  /* ---------- Capa ---------- */
+  .cover{display:grid;grid-template-columns:1.15fr .85fr;background:var(--card);border-radius:24px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line)}
+  .cover-left{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 62%,#1f6b78 100%);color:#fff;padding:44px 40px;position:relative;overflow:hidden}
+  .cover-left::after{content:"";position:absolute;right:-90px;bottom:-90px;width:300px;height:300px;border-radius:50%;background:rgba(224,164,58,.14)}
+  .cover-left::before{content:"";position:absolute;right:40px;bottom:120px;width:90px;height:90px;border-radius:50%;border:12px solid rgba(255,255,255,.06)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:99px;background:rgba(224,164,58,.2);color:var(--gold);border:1px solid rgba(224,164,58,.45)}
+  .cover-left h1{font-size:34px;line-height:1.12;font-weight:900;margin:18px 0 10px;letter-spacing:-.02em}
+  .cover-left h1 span{color:var(--gold)}
+  .cover-left .sub{font-size:14.5px;color:#d3e6e9;max-width:34rem;position:relative;z-index:1}
+  .desc-box{margin-top:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:18px 20px;position:relative;z-index:1}
+  .desc-box .tag{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+  .desc-box .tag b{background:var(--gold);color:#2a1608;font-weight:900;font-size:13px;padding:3px 10px;border-radius:8px}
+  .desc-box .tag span{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#9fc4c9;font-weight:700}
+  .desc-box p{font-size:13px;color:#e8f3f4;line-height:1.55}
+  .cover-right{padding:44px 38px;display:flex;flex-direction:column;justify-content:center}
+  .cover-right h2{font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.01em}
+  .cover-right .lead{font-size:13.5px;color:var(--muted);margin:4px 0 22px}
+  label.f{display:block;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5b4f45;margin-bottom:6px}
+  .inp{width:100%;font:inherit;font-size:15.5px;padding:13px 15px;border:2px solid var(--line);border-radius:12px;background:#fdfaf5;color:var(--ink);outline:none;transition:.15s}
+  .inp:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(194,89,47,.14)}
+  .inp.err{border-color:var(--bad);background:var(--bad-bg)}
+  .field{margin-bottom:16px}
+  .errmsg{font-size:12px;color:var(--bad);font-weight:600;margin-top:5px;min-height:16px}
+  .btn-primary{width:100%;margin-top:6px;padding:15px 20px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--blue),var(--blue-dk));color:#fff;font-weight:800;font-size:15.5px;letter-spacing:.01em;box-shadow:0 10px 20px -8px rgba(194,89,47,.6);transition:.15s}
+  .btn-primary:hover{transform:translateY(-1px);filter:brightness(1.06)}
+  .meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .meta-row span{font-size:12px;font-weight:600;color:#5b4f45;background:#f4ece0;padding:6px 11px;border-radius:99px}
+
+  /* ---------- Apresentação (antes das questões) ---------- */
+  .brief{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden}
+  .brief-top{display:grid;grid-template-columns:minmax(260px,.9fr) 1.1fr;gap:0}
+  .film{background:linear-gradient(160deg,var(--navy),var(--navy-2));padding:28px;color:#fff;display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .film-thumb{position:relative;display:block;border-radius:16px;overflow:hidden;aspect-ratio:16/9;background:linear-gradient(135deg,#d9683b,#e0a43a 55%,#2f8f83);box-shadow:0 14px 30px -14px rgba(0,0,0,.6);text-decoration:none}
+  .film-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .film-thumb .fb-title{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 12px;background:linear-gradient(transparent,rgba(0,0,0,.72));color:#fff;font-weight:800;font-size:14px}
+  .film-thumb .play{position:absolute;inset:0;display:grid;place-items:center}
+  .film-thumb .play i{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+  .film-thumb .play svg{margin-left:4px}
+  .film small{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9fc4c9;font-weight:700}
+  .film .fmeta{font-size:12.5px;color:#d3e6e9;line-height:1.5}
+  .film .flink{font-size:12.5px;word-break:break-all;color:var(--gold);font-weight:700}
+  .film-btn{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;background:var(--gold);color:#2a1608;border:0;border-radius:12px;padding:10px 16px;font-weight:800;font-size:13.5px;text-decoration:none}
+  .film-btn:hover{filter:brightness(1.06)}
+  .brief-obj{padding:28px 30px}
+  .brief h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:800;margin-bottom:10px}
+  .brief-obj h3{font-size:21px;font-weight:900;color:var(--navy);letter-spacing:-.01em;margin-bottom:10px}
+  .brief ul{margin:0 0 0 18px}
+  .brief li{font-size:14px;color:#3d332b;margin-bottom:7px;line-height:1.5}
+  .chips-row{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 4px}
+  .info-chip{background:#fff7e6;border:1px solid #f1d9a3;border-radius:12px;padding:9px 13px;font-size:12.5px;color:#5c3a00;font-weight:600;line-height:1.35}
+  .info-chip b{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9a5b00;margin-bottom:2px}
+  .brief-bot{padding:24px 30px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .note{border-radius:14px;padding:14px 16px;font-size:13.5px;line-height:1.55;border:1px solid}
+  .note b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+  .note.warn{background:#fff7e6;border-color:#f1d9a3;color:#5c3a00;border-left:5px solid var(--gold)}
+  .note.warn b{color:#9a5b00}
+  .note.how{background:#eef7f6;border-color:#bfe0dc;color:#0b4a43;border-left:5px solid var(--teal)}
+  .note.how b{color:#0b5f56}
+  .brief-text{padding:26px 30px 8px;border-top:1px solid var(--line);background:#fdfaf5}
+  .brief-text h3{font-size:21px;font-weight:900;color:var(--navy);letter-spacing:-.01em;margin-bottom:8px;line-height:1.25}
+  .bt-intro{font-size:14px;color:#5b4f45;margin-bottom:16px;max-width:60rem}
+  .bt-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bt-card{background:#fff;border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:14px;padding:16px 18px}
+  .bt-card:nth-child(2n){border-top-color:var(--blue)}
+  .bt-card:nth-child(3n){border-top-color:var(--teal)}
+  .bt-card.wide{grid-column:1/-1}
+  .bt-tag{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:7px;line-height:1.35}
+  .bt-card p{font-size:14px;color:#3d332b;line-height:1.65;text-align:left}
+  details.bt-refs{margin:16px 0 4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 16px}
+  details.bt-refs summary{cursor:pointer;font-size:12.5px;font-weight:800;color:var(--navy)}
+  details.bt-refs ul{margin:8px 0 2px 18px}
+  details.bt-refs li{font-size:12px;color:#3d332b;margin-bottom:7px;line-height:1.5;word-break:break-word}
+  .brief-act{padding-top:22px!important}
+  .brief-act{padding:0 30px 30px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .brief-act .btn-primary{width:auto;margin:0;padding:14px 26px}
+
+  /* ---------- Cabeçalho da atividade ---------- */
+  .qhead{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;box-shadow:var(--shadow);margin-bottom:16px}
+  .qhead-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .qhead h2{font-size:17px;font-weight:800;color:var(--navy)}
+  .qhead .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--blue-soft);color:#8a3a18;border:1px solid #f1cdb7}
+  .chip.gold{background:#fff7e6;color:#9a5b00;border-color:#f1d9a3}
+  .chip.teal{background:#e6f4f2;color:#0b6e65;border-color:#b6e0db}
+  .bar{height:8px;border-radius:99px;background:#efe6d8;overflow:hidden;margin-top:14px}
+  .bar>div{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:99px;transition:width .3s}
+  .bar-txt{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:600;margin-top:7px}
+  .watch{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12.5px;color:var(--muted);font-weight:600}
+  .watch a{font-weight:800}
+
+  .nav{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);margin-bottom:16px}
+  .nav-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .nb{border:2px solid var(--line);background:#fdfaf5;border-radius:11px;padding:7px 0;font-weight:800;font-size:13px;color:#5b4f45;transition:.12s;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+  .nb small{font-size:9.5px;font-weight:600;opacity:.85}
+  .nb:hover{border-color:#b9a994}
+  .nb.cur{border-color:var(--blue);box-shadow:0 0 0 3px rgba(194,89,47,.16);color:var(--blue-dk)}
+  .nb.part{background:#fff7e6;border-color:#f1d9a3;color:#7a4a00}
+  .nb.done{background:var(--ok-bg);border-color:#9fd3cb;color:#0b5f56}
+
+  /* ---------- Cartão da questão ---------- */
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 32px}
+  .qmeta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px}
+  .qmeta .l{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .qnum{background:var(--navy);color:#fff;font-weight:800;font-size:12px;padding:5px 11px;border-radius:9px}
+  .qtheme{font-size:12.5px;color:var(--muted);font-weight:600}
+  .qtype{font-size:12px;color:var(--muted);font-weight:600}
+  .qcard h3{font-size:21px;font-weight:800;color:var(--navy);letter-spacing:-.01em;line-height:1.25}
+  .cf{margin-top:12px;background:#fff7e6;border:1px solid #f1d9a3;border-left:5px solid var(--gold);border-radius:12px;padding:12px 16px;font-size:13.5px;color:#5c3a00}
+  .cf b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#9a5b00;margin-bottom:3px}
+  .quote{margin:16px 0;background:#fdfaf5;border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:12px;padding:14px 18px}
+  .quote b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a3a18;margin-bottom:6px}
+  .quote p{font-size:14.5px;color:#3d332b;text-align:justify;line-height:1.65;margin-bottom:6px}
+  .quote p:last-child{margin-bottom:0}
+  .qsrc{font-size:11.5px;color:#9a8c7d;margin:-6px 0 6px;text-align:right}
+  .tbl-wrap{margin:18px 0}
+  .tbl-cap{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .tbl-cap b{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#3d332b}
+  .tbl-cap span{font-size:11.5px;color:#9a8c7d}
+  .tbl-box{overflow-x:auto;border:1px solid var(--line);border-radius:13px}
+  table.t{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+  table.t thead{background:var(--navy);color:#fff}
+  table.t th{padding:10px 14px;text-align:left;font-weight:700;font-size:12.5px}
+  table.t td{padding:10px 14px;border-top:1px solid #f0e8db}
+  table.t tbody tr:nth-child(even){background:#fdfaf5}
+  table.t td:first-child{font-weight:600;color:#3d332b}
+  table.t td:last-child{font-weight:800;color:var(--blue-dk);white-space:nowrap}
+  .qbib{margin:6px 0 4px;padding:10px 14px;background:#fdfaf5;border:1px solid var(--line);border-radius:12px;font-size:11.5px;line-height:1.5;color:#74675b}
+  .qbib .qh{display:block;font-weight:700;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b4f45;margin-bottom:4px}
+  .qbib p{margin:3px 0;word-break:break-word}
+  .prompt{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;padding:16px 20px;border-radius:14px;font-size:15px;font-weight:600;margin:20px 0 14px;border-left:5px solid var(--gold);line-height:1.55}
+
+  .ans-wrap{position:relative}
+  textarea.ans-field{overflow-wrap:anywhere;word-break:break-word;width:100%;min-height:210px;resize:vertical;font:inherit;font-size:15.5px;line-height:1.6;padding:15px 17px;border:2px solid var(--line);border-radius:14px;background:#fdfaf5;color:var(--ink);outline:none;transition:.15s}
+  textarea.ans-field:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(194,89,47,.14)}
+  textarea.ans-field[readonly]{background:#f7f1e8;color:#3d332b}
+  .ans-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;font-weight:600;color:var(--muted)}
+  .ans-meta .cnt.ok{color:var(--ok);font-weight:800}
+  .guard{font-size:11.5px;color:#9a8c7d}
+
+  .fb{margin-top:22px;border-radius:16px;padding:18px 20px;border:1px solid;background:#eef7f6;border-color:#bfe0dc;color:#0b4a43}
+  .fb h4{font-size:15px;font-weight:800;margin-bottom:6px}
+  .fb ul{margin:6px 0 0 18px}
+  .fb li{font-size:14px;margin-bottom:5px}
+  .fb .diag{margin-top:10px;background:rgba(255,255,255,.78);border-radius:11px;padding:11px 13px;font-size:13px;color:#3d332b}
+  .fb .diag b{display:block;color:var(--ink);margin-bottom:3px}
+
+  .qfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+  .btn{padding:11px 20px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:700;font-size:13.5px;color:#3d332b;transition:.12s}
+  .btn:hover:not([disabled]){border-color:#b9a994;background:#fdfaf5}
+  .btn[disabled]{opacity:.4;cursor:not-allowed}
+  .btn.finish{background:linear-gradient(135deg,var(--teal),#1f6f65);color:#fff;border-color:transparent;box-shadow:0 10px 20px -8px rgba(47,143,131,.6)}
+  .btn.finish:hover:not([disabled]){filter:brightness(1.06);background:linear-gradient(135deg,var(--teal),#1f6f65)}
+  .btn.navy{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .btn.navy:hover:not([disabled]){background:var(--navy-2)}
+  .hint{font-size:12.5px;color:var(--muted);font-weight:600}
+
+  /* ---------- Entrega ---------- */
+  .result{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden}
+  .res-hero{background:linear-gradient(160deg,var(--navy),var(--navy-2));color:#fff;padding:34px 36px;display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center}
+  .seal{width:120px;height:120px;border-radius:50%;background:rgba(224,164,58,.18);border:3px solid var(--gold);display:grid;place-items:center}
+  .res-hero .who small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9fc4c9;font-weight:700}
+  .res-hero .who h2{font-size:26px;font-weight:900;margin:2px 0 4px;letter-spacing:-.01em}
+  .res-hero .who p{color:#d3e6e9;font-size:14px}
+  .res-body{padding:28px 36px 34px}
+  .res-body h3{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:800;margin:6px 0 12px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+  .stat{background:#fdfaf5;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .stat b{display:block;font-size:26px;font-weight:900;color:var(--navy);line-height:1.1}
+  .stat span{font-size:12px;color:var(--muted);font-weight:600}
+  .reply{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:#fff}
+  .reply .rq{font-size:12px;font-weight:800;color:var(--blue-dk);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+  .reply{overflow:hidden}
+  .reply .rp{overflow-wrap:anywhere;font-size:13.5px;color:#3d332b;font-weight:600;margin-bottom:8px;line-height:1.5}
+  .reply .ra{overflow-wrap:anywhere;word-break:break-word;max-width:100%;font-size:14px;color:#1f1a17;white-space:pre-wrap;line-height:1.6;background:#fdfaf5;border-radius:10px;padding:10px 12px}
+  .reply .rg{margin-top:8px;font-size:12.5px;color:#0b4a43;background:#eef7f6;border-radius:10px;padding:9px 12px;line-height:1.5}
+  .reply .rg b{color:#0b5f56}
+  details.refs{margin:18px 0 22px;background:#fdfaf5;border:1px solid var(--line);border-radius:14px;padding:12px 18px}
+  details.refs summary{cursor:pointer;font-size:13px;font-weight:800;color:var(--navy)}
+  details.refs ul{margin:10px 0 2px 18px}
+  details.refs li{font-size:12.5px;color:#3d332b;margin-bottom:8px;line-height:1.5;word-break:break-word}
+  .res-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn.save{background:linear-gradient(135deg,var(--blue),var(--blue-dk));color:#fff;border-color:transparent;box-shadow:0 10px 20px -8px rgba(194,89,47,.6);display:inline-flex;align-items:center;gap:8px}
+  .btn.save:hover:not([disabled]){filter:brightness(1.06);background:linear-gradient(135deg,var(--blue),var(--blue-dk))}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:var(--shadow);max-width:90vw;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot{text-align:center;font-size:12px;color:#9a8c7d;margin-top:26px}
+
+  @media (max-width:860px){
+    .cover{grid-template-columns:1fr}
+    .cover-left,.cover-right{padding:30px 24px}
+    .cover-left h1{font-size:28px}
+    .brief-top{grid-template-columns:1fr}
+    .bt-grid{grid-template-columns:1fr}
+    .res-hero{grid-template-columns:1fr;justify-items:center;text-align:center;padding:28px 22px}
+    .res-body{padding:24px 20px 28px}
+  }
+  @media (max-width:640px){
+    .qcard{padding:22px 18px}
+    .qcard h3{font-size:18px}
+    .nav-grid{grid-template-columns:repeat(3,1fr)}
+    .stats{grid-template-columns:1fr}
+    .topbar .student{display:none}
+    .wrap{padding:16px 12px 40px}
+    .brief-obj{padding:22px 20px}
+    .brief-text,.brief-act{padding-left:20px;padding-right:20px}
+  }
+  @media print{ html,body{display:none!important} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand-mark">DH</div>
+    <div class="brand-txt">
+      <small>Colégio Estadual Rodolfo de Oliveira · 2026</small>
+      <strong>Doce Memória · Direitos Humanos e História</strong>
+    </div>
+    <div class="student hidden" id="top-student"><b id="top-name"></b><span id="top-turma"></span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- CAPA -->
+  <section id="view-cover" class="cover">
+    <div class="cover-left">
+      <span class="pill">História · Direitos Humanos · Ciências Humanas e Sociais Aplicadas</span>
+      <h1>Doce Memória: o que um <span>doce</span> nos ensina sobre <span>direitos humanos</span></h1>
+      <p class="sub"><b>Doce Memória</b> (<i>Sweet Memory</i>) acompanha Yasmin, uma menina síria que chega ao Brasil com a família depois da guerra, carregando objetos, sabores e lembranças que conectam passado, afeto e reconstrução. O preparo do <i>maamoul</i>, doce tradicional recheado com tâmaras, é o eixo simbólico para abordar memória, migração, refúgio, identidade cultural, pertencimento, família, dignidade, trabalho, acolhimento e esperança. Nesta atividade, você vai ler o curta com os olhos da Declaração Universal dos Direitos Humanos.</p>
+      <div class="desc-box">
+        <div class="tag"><b>GO-EMCHS605D · C1</b><span>Direitos Humanos e História</span></div>
+        <p><b>(GO-EMCHS605D)</b> Avaliar como o conjunto de valores dos Direitos Humanos (direito à vida e à liberdade, à liberdade de opinião e de expressão, o direito ao trabalho e à educação, entre outros) se manifestam concretamente para o indivíduo, através do estudo do cotidiano, de documentários sobre violação de direitos fundamentais em guerras e da filosofia humanista sobre os valores éticos universais para perceber que a defesa de tais direitos faz parte indispensável de uma sociedade justa e inclusiva.</p>
+        <p style="margin-top:8px"><b>C1 –</b> Avaliar os princípios da Declaração Universal dos Direitos Humanos e sua efetivação na contemporaneidade.</p>
+      </div>
+    </div>
+    <div class="cover-right">
+      <h2>Identificação do estudante</h2>
+      <p class="lead">Preencha os campos abaixo para começar.</p>
+      <form id="cover-form" autocomplete="off" novalidate>
+        <div class="field">
+          <label class="f" for="in-name">Nome completo</label>
+          <input class="inp" id="in-name" type="text" placeholder="Digite seu nome" maxlength="70">
+          <div class="errmsg" id="err-name"></div>
+        </div>
+        <div class="field">
+          <label class="f" for="in-turma">Turma</label>
+          <input class="inp" id="in-turma" type="text" placeholder="Ex.: 3ª A" maxlength="20">
+          <div class="errmsg" id="err-turma"></div>
+        </div>
+        <button type="submit" class="btn-primary">Continuar →</button>
+      </form>
+      <div class="meta-row">
+        <span>6 questões dissertativas</span><span>Mínimo de 200 caracteres</span><span>Ensino Médio</span><span>Exporta em PDF</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- APRESENTAÇÃO -->
+  <section id="view-brief" class="hidden">
+    <div class="brief">
+      <div class="brief-top">
+        <div class="film">
+          <small>O curta-metragem</small>
+          <a class="film-thumb" id="film-thumb" href="https://youtu.be/HCq7rdYdMqA" target="_blank" rel="noopener noreferrer" aria-label="Assistir ao curta Doce Memória no YouTube">
+            <img id="film-img" src="https://img.youtube.com/vi/HCq7rdYdMqA/hqdefault.jpg" alt="Imagem do curta Doce Memória" onerror="this.style.display='none'">
+            <span class="play"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#c2592f"><path d="M7 4.5v15l13-7.5z"/></svg></i></span>
+            <span class="fb-title">Doce Memória · Sweet Memory</span>
+          </a>
+          <div class="fmeta">Curta-metragem brasileiro de animação · 6min37s<br>GF Production · direção e roteiro: Gregori Fiorini</div>
+          <a class="film-btn" href="https://youtu.be/HCq7rdYdMqA" target="_blank" rel="noopener noreferrer">▶ Assistir ao curta</a>
+          <div class="flink">https://youtu.be/HCq7rdYdMqA</div>
+        </div>
+        <div class="brief-obj">
+          <h2>Objetivos pedagógicos</h2>
+          <h3>O que esta atividade busca</h3>
+          <ul>
+            <li>estimular empatia e leitura crítica de experiências de deslocamento e reconstrução;</li>
+            <li>trabalhar memória, identidade, pertencimento, diversidade cultural e cultura de paz;</li>
+            <li>discutir migração e refúgio sem reduzir pessoas migrantes à condição de vítimas;</li>
+            <li>articular linguagem audiovisual, direitos humanos e formação cidadã;</li>
+            <li>favorecer produções escritas, artísticas e interdisciplinares a partir da experiência do filme.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="brief-text">
+        <h2>Para ler antes do curta</h2>
+        <h3>Guerras, deslocamentos e memória: como a História nos ajuda a ver o curta</h3>
+        <p class="bt-intro">Leia este texto antes de assistir. Ele apresenta as ideias que vão aparecer nas questões e mostra que a história de Yasmin dialoga com processos reais, vividos por muitas pessoas.</p>
+        <div class="bt-grid">
+          <article class="bt-card"><span class="bt-tag">1 · Conflitos e população civil</span>
+            <p>A história do século XX mostrou que as guerras não atingem apenas exércitos: casas, escolas, hospitais e famílias inteiras ficam no caminho. Foi depois da Segunda Guerra Mundial (1939-1945) que a Assembleia Geral da ONU aprovou, em 1948, a Declaração Universal dos Direitos Humanos, como resposta às violações em massa sofridas por civis. Na Síria, o conflito armado iniciado em 2011 obrigou milhões de pessoas a deixar suas casas.</p></article>
+          <article class="bt-card"><span class="bt-tag">2 · Deslocamentos: migração, refúgio e trabalho</span>
+            <p>Migrar é mudar de lugar para viver, trabalhar ou estudar, em geral por escolha. Refugiar-se é diferente: é sair do país porque a vida e a liberdade estão ameaçadas. A Lei 9.474/1997 reconhece como refugiada a pessoa que deixa seu país por perseguição ou por “grave e generalizada violação de direitos humanos”. Em 2013, o Brasil criou o visto humanitário para pessoas afetadas pelo conflito na Síria. Migrar também faz parte da nossa história: entre o fim do século XIX e 1914, muitos sírios e libaneses chegaram ao Brasil e começaram a vida como mascates, vendendo de porta em porta, antes de abrirem lojas e negócios.</p></article>
+          <article class="bt-card"><span class="bt-tag">3 · Memória, identidade cultural, pertencimento, família e dignidade</span>
+            <p>Quem se desloca leva o lugar na memória: receitas, músicas, objetos, o idioma, as histórias da família. É essa memória que sustenta a identidade cultural e ajuda a construir o pertencimento no lugar novo. Por isso os historiadores trabalham não só com documentos oficiais, mas também com relatos e objetos de pessoas comuns. Para a Declaração, preservar essa memória faz parte da dignidade: todos têm o direito de participar da vida cultural da comunidade (art. 27).</p></article>
+          <article class="bt-card"><span class="bt-tag">4 · Reconstrução</span>
+            <p>Reconstruir a vida não é voltar ao que era antes, nem apenas receber ajuda. Envolve moradia, escola, trabalho, vizinhos que acolhem e a possibilidade de contar a própria história com as próprias palavras. O pertencimento não é dado de uma vez: constrói-se com os outros, no dia a dia.</p></article>
+          <article class="bt-card wide"><span class="bt-tag">5 · Direitos humanos e experiências da população civil</span>
+            <p>Os direitos humanos deixam de ser um texto abstrato quando aparecem em coisas concretas: uma matrícula na escola, um trabalho com condições justas, o direito de dizer o que se pensa. Ao assistir ao curta, evite enxergar Yasmin e sua família apenas como vítimas: elas também trazem saberes, trabalho e cultura. Pergunte-se, a cada cena, que direitos estão em jogo e quem precisa agir para que eles se realizem.</p></article>
+        </div>
+        <details class="bt-refs"><summary>Fontes deste texto</summary>
+          <ul>
+            <li>ORGANIZAÇÃO DAS NAÇÕES UNIDAS. <b>Declaração Universal dos Direitos Humanos</b>. Paris, 1948. Disponível em: <a href="https://www.manaus.am.gov.br/semasc/wp-content/uploads/sites/17/2023/08/DECLARACAO-UNIVERSAL-DOS-DIREITOS-HUMANOS-1.pdf" target="_blank" rel="noopener noreferrer">https://www.manaus.am.gov.br/semasc/wp-content/uploads/sites/17/2023/08/DECLARACAO-UNIVERSAL-DOS-DIREITOS-HUMANOS-1.pdf</a>. Acesso em: 9 nov. 2026.</li>
+            <li>BRASIL. <b>Lei nº 9.474, de 22 de julho de 1997</b>. Define mecanismos para a implementação do Estatuto dos Refugiados de 1951. Disponível em: <a href="https://www2.camara.leg.br/legin/fed/lei/1997/lei-9474-22-julho-1997-365390-publicacaooriginal-1-pl.html" target="_blank" rel="noopener noreferrer">https://www2.camara.leg.br/legin/fed/lei/1997/lei-9474-22-julho-1997-365390-publicacaooriginal-1-pl.html</a>. Acesso em: 9 nov. 2026.</li>
+            <li>CONARE. <b>Resolução Normativa nº 17, de 20 de setembro de 2013</b>. Disponível em: <a href="https://www.gov.br/mj/pt-br/assuntos/seus-direitos/refugio/anexos/resolucao-normativa-n-17-do-conare.pdf" target="_blank" rel="noopener noreferrer">https://www.gov.br/mj/pt-br/assuntos/seus-direitos/refugio/anexos/resolucao-normativa-n-17-do-conare.pdf</a>. Acesso em: 9 nov. 2026.</li>
+            <li>QUEIROZ, Christina Stephano de. Mascates: heróis errantes onipresentes no imaginário da imigração. <b>Exilium</b>, n. 8, p. 135-149, 2024. Disponível em: <a href="https://periodicos.unifesp.br/index.php/exilium/article/download/16342/12564/79127" target="_blank" rel="noopener noreferrer">https://periodicos.unifesp.br/index.php/exilium/article/download/16342/12564/79127</a>. Acesso em: 9 nov. 2026.</li>
+          </ul>
+        </details>
+      </div>
+      <div class="brief-act">
+        <button class="btn-primary" id="btn-start">Já assisti ao curta, começar as questões →</button>
+        <button class="btn" id="btn-back-cover">← Voltar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATIVIDADE / REVISÃO -->
+  <section id="view-quiz" class="hidden">
+    <div id="review-banner" class="review-banner hidden"></div>
+    <div class="qhead">
+      <div class="qhead-top">
+        <h2>Doce Memória · Direitos Humanos e História</h2>
+        <div class="chips"><span class="chip gold">GO-EMCHS605D · C1</span><span class="chip teal">Ensino Médio</span></div>
+      </div>
+      <div class="bar"><div id="bar-fill"></div></div>
+      <div class="bar-txt"><span id="bar-left"></span><span id="bar-right"></span></div>
+      <div class="watch">Rever o curta: <a href="https://youtu.be/HCq7rdYdMqA" target="_blank" rel="noopener noreferrer">https://youtu.be/HCq7rdYdMqA</a></div>
+    </div>
+    <nav class="nav" aria-label="Navegação de questões"><div class="nav-grid" id="nav-grid"></div></nav>
+    <main id="qcard" class="qcard"></main>
+  </section>
+
+  <!-- ENTREGA -->
+  <section id="view-result" class="hidden"></section>
+
+  <div class="foot">Colégio Estadual Rodolfo de Oliveira · Doce Memória e os Direitos Humanos · GO-EMCHS605D · 2026</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== Conteúdo =====================
+const MIN = 200;
+const DUDH_REF = 'ORGANIZAÇÃO DAS NAÇÕES UNIDAS. <b>Declaração Universal dos Direitos Humanos</b>. Paris: Assembleia Geral da ONU, 1948. Texto em português disponível em: <a href="https://www.manaus.am.gov.br/semasc/wp-content/uploads/sites/17/2023/08/DECLARACAO-UNIVERSAL-DOS-DIREITOS-HUMANOS-1.pdf" target="_blank" rel="noopener noreferrer">https://www.manaus.am.gov.br/semasc/wp-content/uploads/sites/17/2023/08/DECLARACAO-UNIVERSAL-DOS-DIREITOS-HUMANOS-1.pdf</a>. Acesso em: 9 nov. 2026.';
+const FILM_REF = 'DOCE MEMÓRIA (Sweet Memory). Direção e roteiro: Gregori Fiorini. Produção: GF Production. Curta-metragem de animação, 6min37s. Disponível em: <a href="https://youtu.be/HCq7rdYdMqA" target="_blank" rel="noopener noreferrer">https://youtu.be/HCq7rdYdMqA</a>.';
+const UNHCR_REF = 'AFRICANEWS. <b>UNHCR: number of displaced people worldwide falls for first time in a decade</b>. 12 jun. 2026, a partir do relatório Global Trends do ACNUR. Disponível em: <a href="https://www.africanews.com/amp/2026/06/12/unhcr-number-of-displaced-people-worldwide-falls-for-first-time-in-a-decade/" target="_blank" rel="noopener noreferrer">https://www.africanews.com/amp/2026/06/12/unhcr-number-of-displaced-people-worldwide-falls-for-first-time-in-a-decade/</a>. Acesso em: 9 nov. 2026.';
+
+const questions = [
+ {
+  id: 1,
+  title: 'Questão 1: A imagem que ficou',
+  theme: 'Dignidade humana',
+  skill: 'Avaliar princípios da DUDH',
+  art: 'Art. 1º',
+  quotes: [{ head: 'Declaração Universal dos Direitos Humanos, artigo 1º', text: ['“Todos os seres humanos nascem livres e iguais em dignidade e em direitos. Dotados de razão e de consciência, devem agir uns para com os outros em espírito de fraternidade.”'] }],
+  source: 'ONU, 1948',
+  prompt: 'Escolha uma imagem, um objeto ou um gesto do curta que permaneceu com você depois da exibição e explique de que modo ele expressa a ideia de que todos os seres humanos nascem livres e iguais em dignidade e em direitos.',
+  refs: [DUDH_REF, FILM_REF],
+  guide: ['Nomeie com precisão a imagem, o objeto ou o gesto escolhido, para que quem lê reconheça a cena.', 'Mostre que a dignidade de Yasmin e da família não depende do lugar em que estão nem do que perderam.', 'Relacione a cena à ideia de fraternidade: como as pessoas ao redor agem (ou poderiam agir) diante dela.']
+ },
+ {
+  id: 2,
+  title: 'Questão 2: O maamoul e a vida cultural',
+  theme: 'Memória, cultura e identidade',
+  skill: 'Relacionar cultura e direitos',
+  art: 'Art. 27',
+  quotes: [{ head: 'Declaração Universal dos Direitos Humanos, artigo 27, item 1', text: ['“Toda a pessoa tem o direito de tomar parte livremente na vida cultural da comunidade, de fruir as artes e de participar no progresso científico e nos benefícios que deste resultam.”'] }],
+  source: 'ONU, 1948',
+  prompt: 'Tomando como ponto de partida uma comida, uma receita ou um hábito que carrega a memória da sua própria família, explique por que o preparo do maamoul no curta pode ser lido como exercício do direito de tomar parte livremente na vida cultural da comunidade.',
+  refs: [DUDH_REF, FILM_REF],
+  guide: ['Conecte o seu exemplo familiar ao maamoul: nos dois casos, o alimento guarda memória e identidade.', 'Explique por que cultura aparece na Declaração como direito, e não apenas como lembrança ou costume.', 'Considere o que a comunidade de chegada precisa fazer para que esse direito seja exercido na prática.']
+ },
+ {
+  id: 3,
+  title: 'Questão 3: Chegar e pertencer',
+  theme: 'Refúgio, asilo e pertencimento',
+  skill: 'Avaliar a efetivação dos direitos',
+  art: 'Art. 13 e 14',
+  quotes: [{ head: 'Declaração Universal dos Direitos Humanos, artigos 13 (item 2) e 14 (item 1)', text: ['“Toda a pessoa tem o direito de abandonar o país em que se encontra, incluindo o seu, e o direito de regressar ao seu país.” (art. 13, item 2)', '“Toda a pessoa sujeita a perseguição tem o direito de procurar e de beneficiar de asilo em outros países.” (art. 14, item 1)'] }],
+  source: 'ONU, 1948',
+  prompt: 'Lembrando de uma situação em que você foi a pessoa nova em um grupo, explique por que o direito de procurar asilo, previsto no artigo 14, só se efetiva de verdade quando o país de chegada também garante condições de pertencimento no dia a dia, como se vê na trajetória de Yasmin.',
+  refs: [DUDH_REF, FILM_REF],
+  guide: ['Diferencie ter o direito reconhecido no papel de poder exercê-lo no cotidiano.', 'Use a sua experiência de ser a pessoa nova para indicar o que faz alguém se sentir parte (ou excluído).', 'Aponte, na trajetória de Yasmin, onde o pertencimento aparece como algo construído com os outros.']
+ },
+ {
+  id: 4,
+  title: 'Questão 4: Recomeçar com trabalho e escola',
+  theme: 'Trabalho, educação e identidade',
+  skill: 'Avaliar direitos no cotidiano',
+  art: 'Art. 23 e 26',
+  quotes: [{ head: 'Declaração Universal dos Direitos Humanos, artigos 23 (item 1) e 26 (item 1)', text: ['“Toda a pessoa tem direito ao trabalho, à livre escolha do trabalho, a condições equitativas e satisfatórias de trabalho e à proteção contra o desemprego.” (art. 23, item 1)', '“Toda a pessoa tem direito à educação. A educação deve ser gratuita, pelo menos a correspondente ao ensino elementar fundamental.” (art. 26, item 1)'] }],
+  source: 'ONU, 1948',
+  prompt: 'Pensando no que você precisaria para recomeçar a vida em outro lugar, avalie por que o direito ao trabalho (art. 23) e o direito à educação (art. 26) são decisivos para que uma pessoa preserve sua identidade e não seja reduzida à condição de vítima.',
+  refs: [DUDH_REF, FILM_REF],
+  guide: ['Indique, a partir do seu próprio exemplo, o que trabalho e escola oferecem além de renda e diploma: autonomia, rede de apoio, voz.', 'Explique como a ausência desses direitos transforma a pessoa em alguém que apenas recebe ajuda.', 'Mostre como o curta valoriza o trabalho e o saber da família, e não só a perda causada pela guerra.']
+ },
+ {
+  id: 5,
+  title: 'Questão 5: Acolher não é falar pelo outro',
+  theme: 'Acolhimento e liberdade de expressão',
+  skill: 'Relacionar direitos e formação cidadã',
+  art: 'Art. 19',
+  quotes: [{ head: 'Declaração Universal dos Direitos Humanos, artigo 19', text: ['“Todo o indivíduo tem direito à liberdade de opinião e de expressão, o que implica o direito de não ser inquietado pelas suas opiniões e o de procurar, receber e difundir, sem consideração de fronteiras, informações e ideias por qualquer meio de expressão.”'] }],
+  source: 'ONU, 1948',
+  prompt: 'Usando como exemplo uma atitude concreta de acolhimento que você poderia ter na sua escola, explique por que acolher alguém é diferente de falar por essa pessoa, à luz da liberdade de opinião e de expressão prevista no artigo 19.',
+  refs: [DUDH_REF, FILM_REF],
+  guide: ['Descreva a atitude de acolhimento de forma concreta (o que você faria, em que situação, com quem).', 'Mostre que falar por alguém retira dessa pessoa o direito de dizer a própria história com as próprias palavras.', 'Lembre que a participação deve ser voluntária: acolher também é respeitar quem prefere não falar.']
+ },
+ {
+  id: 6,
+  title: 'Questão 6: Da perda ao futuro',
+  theme: 'Efetivação dos direitos na contemporaneidade',
+  skill: 'Avaliar a efetivação dos direitos',
+  art: 'Art. 3º e 14',
+  quotes: [{ head: 'Declaração Universal dos Direitos Humanos, artigos 3º e 14 (item 1)', text: ['“Todo indivíduo tem direito à vida, à liberdade e à segurança pessoal.” (art. 3º)', '“Toda a pessoa sujeita a perseguição tem o direito de procurar e de beneficiar de asilo em outros países.” (art. 14, item 1)'] }],
+  source: 'ONU, 1948; ACNUR, Global Trends, 2026',
+  table: {
+    title: 'Deslocamento forçado no mundo, ao final de 2025',
+    columns: ['Indicador', 'Número'],
+    rows: [
+      ['Pessoas deslocadas à força no mundo', '117,8 milhões'],
+      ['Deslocadas dentro do próprio país', '68,7 milhões'],
+      ['Refugiadas (vivendo em outros países)', '41,6 milhões']
+    ],
+    note: 'O relatório registra a primeira queda do deslocamento forçado em uma década, associada ao aumento de retornos em grandes crises, entre elas a da Síria.'
+  },
+  prompt: 'Avalie em que medida os direitos à vida, à liberdade e à segurança (art. 3º) e de procurar asilo (art. 14) se efetivam hoje para as pessoas deslocadas pela guerra, relacionando os dados apresentados à história de Yasmin e ao modo como o curta transforma uma experiência de perda em possibilidade de futuro.',
+  refs: [DUDH_REF, FILM_REF, UNHCR_REF],
+  guide: ['Use os números com sentido: mostre o que cada um revela sobre quantas pessoas ainda dependem desses direitos.', 'Faça a ponte entre o dado e a história de Yasmin: uma família concreta dentro de uma estatística enorme.', 'Conclua avaliando: a defesa dos direitos humanos é condição para uma sociedade justa e inclusiva? Por quê?']
+ }
+];
+
+// ===================== Estado =====================
+const TOTAL = questions.length;
+let student = { name: '', turma: '' };
+let cur = 0;
+let mode = 'cover';               // cover | brief | quiz | review | result
+const answers = new Array(TOTAL).fill('');
+let finishedAt = null;
+
+const $ = id => document.getElementById(id);
+function show(view){
+  ['cover','brief','quiz','result'].forEach(v => $('view-' + v).classList.toggle('hidden', v !== view));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function fmtDate(d){ return d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
+const len = i => answers[i].trim().length;
+const isDone = i => len(i) >= MIN;
+const doneCount = () => answers.filter((_, i) => isDone(i)).length;
+
+// ===================== Capa e apresentação =====================
+$('cover-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const n = $('in-name').value.trim().replace(/\s+/g, ' ');
+  const t = $('in-turma').value.trim();
+  $('err-name').textContent = ''; $('err-turma').textContent = '';
+  $('in-name').classList.remove('err'); $('in-turma').classList.remove('err');
+  let ok = true;
+  if (n.length < 5 || !n.includes(' ')) { $('err-name').textContent = 'Digite seu nome e sobrenome.'; $('in-name').classList.add('err'); ok = false; }
+  if (!t) { $('err-turma').textContent = 'Informe sua turma.'; $('in-turma').classList.add('err'); ok = false; }
+  if (!ok) return;
+  student = { name: n, turma: t };
+  $('top-name').textContent = n; $('top-turma').textContent = 'Turma ' + t;
+  $('top-student').classList.remove('hidden');
+  mode = 'brief'; show('brief');
+});
+$('btn-back-cover').onclick = () => { mode = 'cover'; show('cover'); };
+$('btn-start').onclick = () => { answers.fill(''); cur = 0; finishedAt = null; mode = 'quiz'; show('quiz'); renderAll(); };
+
+// ===================== Atividade =====================
+function renderAll(){ renderNav(); renderQuestion(); renderProgress(); }
+
+function renderProgress(){
+  const n = doneCount();
+  $('bar-fill').style.width = (n / TOTAL * 100) + '%';
+  $('bar-left').textContent = mode === 'review' ? 'Revisão das respostas' : `${n} de ${TOTAL} respostas completas`;
+  $('bar-right').textContent = mode === 'review' ? '' : (n === TOTAL ? 'Pronto para finalizar' : `Faltam ${TOTAL - n}`);
+}
+function renderNav(){
+  const g = $('nav-grid'); g.innerHTML = '';
+  questions.forEach((q, i) => {
+    const b = document.createElement('button');
+    let cls = 'nb', sub;
+    if (isDone(i)) { cls += ' done'; sub = 'Completa'; }
+    else if (len(i) > 0) { cls += ' part'; sub = len(i) + '/' + MIN; }
+    else sub = '—';
+    if (i === cur) cls += ' cur';
+    b.className = cls;
+    b.innerHTML = `Q${i + 1}<small>${sub}</small>`;
+    b.onclick = () => go(i);
+    g.appendChild(b);
+  });
+}
+function renderQuestion(){
+  const q = questions[cur];
+  const review = mode === 'review';
+  const quotesHtml = q.quotes.map(x => `<div class="quote"><b>${x.head}</b>${x.text.map(p => `<p>${p}</p>`).join('')}</div>`).join('') + `<div class="qsrc">Fonte: ${q.source}</div>`;
+  let tableHtml = '';
+  if (q.table) {
+    tableHtml = `<div class="tbl-wrap"><div class="tbl-cap"><b>${q.table.title}</b><span>Fonte: ACNUR, Global Trends (2026)</span></div>
+      <div class="tbl-box"><table class="t"><thead><tr>${q.table.columns.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${q.table.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+      <p class="qsrc" style="text-align:left;margin-top:8px">${q.table.note}</p></div>`;
+  }
+  const last = cur === TOTAL - 1;
+  const n = doneCount();
+  let right;
+  if (review) right = last ? `<button class="btn navy" onclick="showResult()">Voltar à entrega</button>` : `<button class="btn navy" onclick="go(${cur + 1})">Próxima →</button>`;
+  else if (last) right = `<button class="btn finish" id="btn-finish" onclick="finish()" ${n < TOTAL ? 'disabled' : ''}>Finalizar atividade ✓</button>`;
+  else right = `<button class="btn navy" onclick="go(${cur + 1})">Próxima →</button>`;
+  const hint = (!review && n < TOTAL) ? `<span class="hint" id="foot-hint">Faltam ${TOTAL - n} resposta(s) para finalizar</span>` : '<span id="foot-hint"></span>';
+
+  const fb = review ? `<div class="fb"><h4>Para comparar com a sua resposta</h4><ul>${q.guide.map(g => `<li>${g}</li>`).join('')}</ul>
+      <div class="diag"><b>Referências desta questão</b>${q.refs.map(r => `<span style="display:block;margin-top:5px">${r}</span>`).join('')}</div></div>` : '';
+
+  const L = len(cur);
+  $('qcard').innerHTML = `
+    <div class="qmeta">
+      <div class="l"><span class="qnum">Questão ${q.id} de ${TOTAL}</span><span class="chip gold">DUDH · ${q.art}</span><span class="qtheme">${q.theme}</span></div>
+      <span class="qtype">${q.skill}</span>
+    </div>
+    <h3>${q.title}</h3>
+    ${quotesHtml}${tableHtml}
+    <div class="qbib"><span class="qh">Referências (ABNT)</span>${q.refs.map(r => `<p>${r}</p>`).join('')}</div>
+    <div class="prompt">${q.prompt}</div>
+    <div class="ans-wrap">
+      <textarea class="ans-field" id="ans" data-min="${MIN}" ${review ? 'readonly' : ''} placeholder="Escreva aqui a sua resposta, com as suas palavras." spellcheck="true" autocomplete="off" autocorrect="off">${esc(answers[cur])}</textarea>
+    </div>
+    <div class="ans-meta"><span class="cnt${L >= MIN ? ' ok' : ''}" id="cnt">${L} / ${MIN} caracteres no mínimo</span><span class="guard">Copiar e colar estão desativados.</span></div>
+    ${fb}
+    <div class="qfoot">
+      <button class="btn" onclick="go(${cur - 1})" ${cur === 0 ? 'disabled' : ''}>← Anterior</button>
+      ${hint}
+      ${right}
+    </div>`;
+  const ta = $('ans'); if (ta) ta._prev = ta.value;
+}
+function go(i){
+  if (i < 0 || i >= TOTAL) return;
+  cur = i; renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function finish(){
+  if (doneCount() < TOTAL) { toast('Complete todas as respostas (mínimo de ' + MIN + ' caracteres) para finalizar.'); return; }
+  finishedAt = new Date();
+  showResult();
+}
+
+// atualiza contagem sem recriar o campo (mantém o cursor)
+function onAnswerInput(el){
+  answers[cur] = el.value;
+  const L = len(cur);
+  const c = $('cnt'); c.textContent = `${L} / ${MIN} caracteres no mínimo`; c.classList.toggle('ok', L >= MIN);
+  renderNav(); renderProgress();
+  const n = doneCount();
+  const bf = $('btn-finish'); if (bf) bf.disabled = n < TOTAL;
+  const fh = $('foot-hint'); if (fh) fh.textContent = n < TOTAL ? `Faltam ${TOTAL - n} resposta(s) para finalizar` : '';
+}
+
+// ===================== Entrega =====================
+function showResult(){
+  mode = 'result';
+  if (!finishedAt) finishedAt = new Date();
+  const replies = questions.map((q, i) => `<div class="reply"><div class="rq">Questão ${q.id} · ${q.art}</div><div class="rp">${q.prompt}</div><div class="ra">${esc(answers[i].trim())}</div></div>`).join('');
+  const refSet = new Set(); questions.forEach(q => q.refs.forEach(r => refSet.add(r)));
+  const refs = [...refSet].sort((a, b) => a.replace(/<[^>]+>/g, '').localeCompare(b.replace(/<[^>]+>/g, ''), 'pt-BR'));
+  const ready = doneCount() === TOTAL;
+  $('view-result').innerHTML = `
+    <div class="result">
+      <div class="res-hero">
+        <div class="seal"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#e0a43a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div class="who">
+          <small>Atividade concluída</small>
+          <h2>${esc(student.name)}</h2>
+          <p>Turma ${esc(student.turma)} · ${fmtDate(finishedAt)}</p>
+          <p style="margin-top:6px">Doce Memória · Direitos Humanos e História · GO-EMCHS605D (C1)</p>
+        </div>
+      </div>
+      <div class="res-body">
+        <h3>Suas respostas e o que uma boa resposta mobiliza</h3>
+        ${questions.map((q, i) => `<div class="reply"><div class="rq">Questão ${q.id} · ${q.art}</div><div class="rp">${q.prompt}</div><div class="ra">${esc(answers[i].trim())}</div><div class="rg"><b>Compare com a sua resposta:</b> ${q.guide.join(' ')}</div></div>`).join('')}
+        <details class="refs"><summary>Referências e fontes (${refs.length})</summary><ul>${refs.map(r => `<li>${r}</li>`).join('')}</ul></details>
+        <div class="res-actions">
+          <button class="btn save" id="btn-pdf" onclick="exportarPDF()" ${ready ? '' : 'disabled'}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            Exportar em PDF</button>
+          <button class="btn navy" onclick="startReview()">Revisar questão por questão</button>
+          <button class="btn" onclick="backEdit()">Voltar e editar respostas</button>
+          <span class="hint">${ready ? 'Todas as respostas estão completas.' : 'O PDF só é liberado quando todas as respostas chegam ao mínimo de ' + MIN + ' caracteres.'}</span>
+        </div>
+      </div>
+    </div>`;
+  show('result');
+}
+function startReview(){ mode = 'review'; cur = 0; show('quiz'); renderAll(); }
+function backEdit(){ mode = 'quiz'; cur = 0; show('quiz'); renderAll(); }
+
+// ===================== PDF =====================
+function pdfSafe(s){
+  return String(s).replace(/(\S{50})(?=\S)/g, '$1 ').replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/[–—]/g, '-').replace(/…/g, '...').replace(/[^\u0000-ÿ]/g, '');
+}
+function exportarPDF(){
+  if (doneCount() < TOTAL) { toast('Complete todas as respostas para exportar o PDF.'); return; }
+  if (!window.jspdf || !window.jspdf.jsPDF) { toast('Biblioteca de PDF indisponível. Verifique a conexão e tente novamente.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const W = 210, M = 18, TW = W - 2 * M;
+  let y = 0;
+  const strip = s => s.replace(/<[^>]+>/g, '');
+  const ensure = h => { if (y + h > 280) { doc.addPage(); y = 20; } };
+  const para = (text, size, style, color, gap) => {
+    doc.setFont('helvetica', style); doc.setFontSize(size); doc.setTextColor(...color);
+    const lines = doc.splitTextToSize(pdfSafe(text), TW);
+    lines.forEach(l => { ensure(size * 0.5); doc.text(l, M, y); y += size * 0.45; });
+    y += gap;
+  };
+  doc.setFillColor(16, 54, 63); doc.rect(0, 0, W, 34, 'F');
+  doc.setFillColor(224, 164, 58); doc.rect(0, 34, W, 2, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(17);
+  doc.text('Doce Memoria e os Direitos Humanos', M, 17);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5);
+  doc.text(pdfSafe('Colégio Estadual Rodolfo de Oliveira · 2026 · GO-EMCHS605D (C1)'), M, 25);
+  y = 46;
+  para('Estudante: ' + student.name, 12, 'bold', [16, 54, 63], 1);
+  para('Turma: ' + student.turma + '   |   Data: ' + fmtDate(finishedAt || new Date()), 10.5, 'normal', [90, 80, 70], 5);
+  questions.forEach((q, i) => {
+    ensure(30);
+    para('Questão ' + q.id + ' - ' + q.title.replace(/^Questão \d+: /, '') + ' (' + q.art + ')', 11.5, 'bold', [194, 89, 47], 1.5);
+    para(q.prompt, 10, 'italic', [60, 50, 43], 2);
+    para(answers[i].trim(), 10.5, 'normal', [31, 26, 23], 6);
+  });
+  ensure(24);
+  para('Referências', 11, 'bold', [16, 54, 63], 1.5);
+  const refSet = new Set(); questions.forEach(q => q.refs.forEach(r => refSet.add(strip(r))));
+  [...refSet].sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(r => para(r, 8.5, 'normal', [90, 80, 70], 2));
+  const safe = student.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '').toLowerCase() || 'aluno';
+  const fname = `doce_memoria_direitos_humanos_${safe}.pdf`;
+  doc.save(fname);
+  toast('PDF salvo: ' + fname);
+}
+
+// ===================== Proteção contra copiar e colar =====================
+(function(){
+  const inField = t => t && t.closest && t.closest('textarea,input');
+  const warn = () => toast('Copiar e colar estão desativados. Escreva com as suas palavras.');
+  ['copy','cut','paste','dragstart','drop','contextmenu'].forEach(ev =>
+    document.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); warn(); }, true));
+  document.addEventListener('dragover', e => e.preventDefault(), true);
+  document.addEventListener('selectstart', e => { if (!inField(e.target)) e.preventDefault(); }, true);
+  document.addEventListener('keydown', e => {
+    const k = (e.key || '').toLowerCase();
+    const mod = e.ctrlKey || e.metaKey;
+    const block = (mod && ['c','x','v','a','p','s','u'].includes(k)) ||
+      (e.shiftKey && k === 'insert') || (e.ctrlKey && k === 'insert') ||
+      k === 'f12' || (mod && e.shiftKey && ['i','j','c'].includes(k));
+    if (block) { e.preventDefault(); e.stopPropagation(); if (!['f12'].includes(k)) warn(); }
+  }, true);
+  document.addEventListener('keyup', e => {
+    if (e.key === 'PrintScreen') { try { navigator.clipboard.writeText(''); } catch(_){} warn(); }
+  }, true);
+  const PASTE_TYPES = ['insertFromPaste','insertFromDrop','insertFromYank','insertFromPasteAsQuotation'];
+  document.addEventListener('beforeinput', e => {
+    if (inField(e.target) && PASTE_TYPES.includes(e.inputType)) { e.preventDefault(); e.stopPropagation(); warn(); }
+  }, true);
+  // neutraliza inserções grandes de uma só vez (painel de área de transferência do teclado)
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (!el || !el.classList || !el.classList.contains('ans-field')) return;
+    const prev = el._prev == null ? '' : el._prev;
+    if (e.inputType !== 'insertReplacementText' && el.value.length - prev.length >= 25) {
+      el.value = prev; e.stopImmediatePropagation(); warn(); return;
+    }
+    el._prev = el.value;
+  }, true);
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (el && el.classList && el.classList.contains('ans-field') && !el.readOnly) onAnswerInput(el);
+  });
+})();
+</script>
+</body>
+</html>
